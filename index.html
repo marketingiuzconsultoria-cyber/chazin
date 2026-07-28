@@ -144,10 +144,12 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
 
 /* diffs */
 .diffs{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0}
-.diff{border:1px solid var(--line);border-radius:16px;padding:24px 26px;background:linear-gradient(158deg,rgba(14,27,50,.72),rgba(6,12,22,.6));backdrop-filter:blur(8px);
-  display:flex;flex-direction:column;justify-content:center;transition:transform .45s cubic-bezier(.2,.72,.15,1),border-color .35s,box-shadow .35s}
+.diff{border:1px solid var(--line);border-radius:16px;padding:26px 28px;background:linear-gradient(158deg,rgba(14,27,50,.72),rgba(6,12,22,.6));backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:transform .45s cubic-bezier(.2,.72,.15,1),border-color .35s,box-shadow .35s}
 .diff:hover{transform:translateY(-4px);border-color:rgba(0,162,248,.55);box-shadow:0 24px 60px rgba(0,60,120,.4)}
-.diff .ix{font-family:var(--util);font-size:12.5px;font-weight:600;color:var(--cyan);letter-spacing:.14em;margin-bottom:8px}
+.diff:hover .wm{color:rgba(0,162,248,.12)}
+.diff .wm{position:absolute;right:2px;top:-34px;font-size:160px;font-weight:700;letter-spacing:-.05em;line-height:1;color:rgba(120,180,255,.055);pointer-events:none;transition:color .4s;font-variant-numeric:tabular-nums}
+.diff .ix{font-family:var(--util);font-size:12.5px;font-weight:600;color:var(--cyan);letter-spacing:.14em;position:relative}
 .diff h3{font-size:22px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
 .diff p{font-size:15px;line-height:1.5;color:var(--mut)}
 
@@ -246,6 +248,42 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
 .slide.active .sweep{animation:swp 9s ease-in-out .4s infinite}
 @keyframes swp{0%{transform:translateX(-35%)}55%,100%{transform:translateX(35%)}}
 
+/* automatic light sweep on every slide */
+.slide .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 44%,rgba(150,210,255,.07) 50%,transparent 56%);transform:translateX(-45%);pointer-events:none}
+.slide.active .bg::after{animation:swp 11s ease-in-out 1s infinite}
+.slide.light .bg::after{background:linear-gradient(115deg,transparent 44%,rgba(255,255,255,.5) 50%,transparent 56%)}
+
+/* pointer-follow glow (dynamic) */
+#ptr{position:absolute;width:680px;height:680px;border-radius:50%;pointer-events:none;z-index:2;transform:translate(-50%,-50%);left:var(--px,50%);top:var(--py,45%);
+  background:radial-gradient(circle,rgba(0,150,255,.12),transparent 62%);opacity:0;transition:opacity .5s;mix-blend-mode:screen}
+#stage:hover #ptr{opacity:1}
+
+/* continuous float on hero elements */
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.giant{animation:floaty 6.5s ease-in-out infinite}
+.badge{animation:floaty 5s ease-in-out infinite}
+@keyframes beampulse{0%,100%{box-shadow:0 0 16px rgba(0,162,248,.6),0 0 40px rgba(0,120,220,.32)}50%{box-shadow:0 0 24px rgba(0,162,248,.9),0 0 66px rgba(0,150,255,.5)}}
+.slide.active .beam{animation:beampulse 3.2s ease-in-out 1s infinite}
+@keyframes iconpulse{0%,100%{box-shadow:0 0 18px rgba(0,162,248,.3)}50%{box-shadow:0 0 30px rgba(0,162,248,.6)}}
+.slide.active .drop .ph .ic{animation:iconpulse 2.4s ease-in-out infinite}
+
+/* fill helpers — content spread top-to-bottom so panels never look loose */
+.pfill{display:flex;flex-direction:column;height:100%;justify-content:space-between;gap:16px}
+.pfill .grow{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chipx{font-family:var(--util);font-size:13px;font-weight:500;letter-spacing:.05em;color:var(--mut);border:1px solid var(--line);border-radius:100px;padding:8px 15px;background:rgba(120,170,255,.05)}
+.chipx b{color:var(--cyan);font-weight:600}
+.slide.light .chipx{color:var(--pmut);border-color:var(--pline);background:rgba(20,66,120,.05)}
+.metarow{display:flex;gap:30px;padding-top:18px;border-top:1px solid var(--line)}
+.slide.light .metarow{border-color:var(--pline)}
+.metarow .mv{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1;color:#eaf6ff}
+.slide.light .metarow .mv{color:#0a2036}
+.metarow .mk{font-family:var(--util);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-top:6px}
+.slide.light .metarow .mk{color:var(--pmut)}
+.divln{height:1px;background:var(--line);width:100%}
+.slide.light .divln{background:var(--pline)}
+.count{font-variant-numeric:tabular-nums}
+
 /* HUD */
 .hud{position:absolute;left:0;right:0;z-index:20;display:flex;align-items:center;pointer-events:none}
 .hud-top{top:0;height:84px;padding:0 52px;justify-content:space-between}
@@ -327,17 +365,26 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <h1 data-anim style="--i:1;max-width:22ch">Antes de qualquer post, uma base</h1>
       </div>
       <div class="g2u">
-        <div class="panel" data-anim style="--i:2"><span class="corner mono">01 / RACIOCÍNIO</span>
-          <div class="col" style="gap:22px">
-            <p class="lead" style="font-size:22px">Este documento não é uma coleção de artes. É a <strong>fundação</strong> de tudo o que a Chazin Mello vai comunicar daqui pra frente.</p>
-            <p class="lead">Aqui está o raciocínio por trás de cada escolha: por que essas cores, esse tom, esses formatos. Quando o raciocínio está claro, cada peça nova — feita por qualquer pessoa, a qualquer momento — continua parecendo a Chazin Mello.</p>
+        <div class="panel" data-anim style="--i:2">
+          <div class="pfill" style="justify-content:space-between">
+            <div class="tagline" style="color:var(--blue-d)">O raciocínio</div>
+            <p style="font-size:33px;font-weight:600;letter-spacing:-.02em;line-height:1.16;color:var(--pink)">Não é uma coleção de artes. É a <span style="color:var(--blue-d)">fundação</span> de tudo o que a Chazin Mello vai comunicar daqui pra frente.</p>
+            <div class="divln"></div>
+            <p class="lead" style="font-size:19px">Aqui está o porquê de cada escolha. Quando o raciocínio está claro, cada peça nova — feita por qualquer pessoa, a qualquer momento — continua parecendo a Chazin Mello.</p>
+            <div class="chips">
+              <span class="chipx"><b>Por quê</b> essas cores</span>
+              <span class="chipx"><b>Por quê</b> esse tom</span>
+              <span class="chipx"><b>Por quê</b> esses formatos</span>
+            </div>
           </div>
         </div>
         <div class="panel glow" data-anim style="--i:3">
-          <div class="col" style="justify-content:space-between;height:100%">
+          <div class="pfill">
             <div class="tagline" style="color:var(--blue-d)">O resultado</div>
-            <div><div class="giant" style="font-size:130px;color:#0a2036;text-shadow:none;line-height:.9">Consistência</div></div>
-            <p class="lead">É o que garante uma marca reconhecível quando o volume de conteúdo aumentar — sem depender de quem produziu.</p>
+            <div class="grow" style="justify-content:center">
+              <div style="font-size:96px;font-weight:700;letter-spacing:-.04em;line-height:.92;color:#0a2036">Consis&shy;tência</div>
+            </div>
+            <p class="lead" style="padding-top:18px;border-top:1px solid var(--pline)">Uma marca reconhecível quando o volume de conteúdo aumentar — sem depender de quem produziu.</p>
           </div>
         </div>
       </div>
@@ -353,20 +400,27 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <div class="beam" data-anim style="--i:0;--bw:210px;margin:18px 0 18px"></div>
         <h1 data-anim style="--i:1">Quem é a Chazin Mello</h1>
       </div>
-      <div class="g2u">
+      <div class="g2u" style="grid-template-columns:1.35fr .65fr">
         <div class="panel" data-anim style="--i:2">
-          <div class="col" style="gap:20px;justify-content:center">
-            <p class="lead">Nasceu de uma dor que não tinha nome no Brasil. De um lado, jurídicos sobrecarregados, perdendo gente-chave. Do outro, advogados excelentes sem uma porta de entrada flexível para atuar.</p>
-            <p class="lead">Entre contratar e terceirizar, faltava uma terceira via. Trouxemos o <strong>secondment</strong> — modelo consolidado fora do Brasil — e o adaptamos à realidade jurídica brasileira. Hoje somos o <strong>1º escritório 100% especializado em secondment jurídico do país.</strong></p>
+          <div class="pfill" style="justify-content:space-between">
+            <div class="tagline" style="color:var(--cyan)">A terceira via</div>
+            <p style="font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.2">Nasceu de uma dor que não tinha nome no Brasil: jurídicos sobrecarregados de um lado, advogados excelentes sem porta de entrada flexível do outro.</p>
+            <div class="divln"></div>
+            <p class="lead" style="font-size:19px">Entre <strong>contratar</strong> e <strong>terceirizar</strong>, faltava uma terceira via. Trouxemos o <strong>secondment</strong> — modelo consolidado fora do Brasil — e o adaptamos à realidade jurídica brasileira.</p>
+            <div class="chips">
+              <span class="chipx">contratar</span><span class="chipx">terceirizar</span><span class="chipx"><b>secondment</b></span>
+            </div>
           </div>
         </div>
-        <div class="panel glow" data-anim style="--i:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px">
-          <div class="tagline" style="color:var(--cyan)">Trajetória</div>
-          <div class="giant" style="font-size:280px">5</div>
-          <div class="mono" style="font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-top:-6px">Anos de mercado</div>
-          <div style="display:flex;gap:26px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line);width:100%">
-            <div><div style="font-size:34px;font-weight:700;letter-spacing:-.02em">1º</div><div class="overline" style="margin-top:4px">no país</div></div>
-            <div><div style="font-size:34px;font-weight:700;letter-spacing:-.02em">100%</div><div class="overline" style="margin-top:4px">secondment</div></div>
+        <div class="panel glow" data-anim style="--i:3">
+          <div class="pfill" style="justify-content:center;align-items:flex-start;gap:2px">
+            <div class="tagline" style="color:var(--cyan)">Trajetória</div>
+            <div class="giant count" data-to="5" style="font-size:250px" data-anim>5</div>
+            <div class="mono" style="font-size:19px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-top:-4px">Anos de mercado</div>
+            <div class="metarow" style="margin-top:26px;width:100%">
+              <div><div class="mv"><span class="count" data-to="1" data-suf="º">1º</span></div><div class="mk">escritório no país</div></div>
+              <div><div class="mv"><span class="count" data-to="100" data-suf="%">100%</span></div><div class="mk">especializado em secondment</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -385,14 +439,25 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
       </div>
       <div class="g2u">
         <div class="panel" data-anim style="--i:2">
-          <div class="col" style="justify-content:center;gap:20px">
-            <p class="lead"><strong>Secondment</strong> é uma palavra que quase ninguém no mercado jurídico brasileiro conhece — nem quem trabalha dentro dele.</p>
-            <p class="lead">Isso muda o tipo de trabalho da comunicação: não é sobre parecer bonita, é sobre <strong>ensinar um conceito novo</strong>, com repetição e clareza, até virar reflexo — quando o jurídico trava, a primeira palavra é "secondment" e o primeiro nome é Chazin Mello.</p>
+          <div class="pfill" style="justify-content:space-between">
+            <div class="tagline" style="color:var(--cyan)">O que muda</div>
+            <p style="font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.2"><span style="color:var(--cyan)">Secondment</span> é uma palavra que quase ninguém no mercado jurídico brasileiro conhece — nem quem trabalha dentro dele.</p>
+            <div class="divln"></div>
+            <p class="lead" style="font-size:19px">Não é sobre parecer bonita: é sobre <strong>ensinar um conceito novo</strong>, com repetição e clareza, até virar reflexo — quando o jurídico trava, a primeira palavra é "secondment" e o primeiro nome é Chazin Mello.</p>
+            <div class="metarow">
+              <div><div class="mv"><span class="count" data-to="0" data-pre="~" data-suf="%">~0%</span></div><div class="mk">conhecem o termo</div></div>
+              <div><div class="mv">Ensinar</div><div class="mk">antes de vender</div></div>
+            </div>
           </div>
         </div>
-        <div class="panel glow" data-anim style="--i:3;display:flex;flex-direction:column;justify-content:center;gap:24px">
-          <div class="tagline" style="color:var(--cyan)">A virada de chave</div>
-          <div class="pull">Não vendemos um serviço.<br><span class="hl">Construímos uma categoria.</span></div>
+        <div class="panel glow" data-anim style="--i:3">
+          <div class="pfill">
+            <div class="tagline" style="color:var(--cyan)">A virada de chave</div>
+            <div class="grow" style="justify-content:center">
+              <div class="pull" style="font-size:56px">Não vendemos um serviço.<br><span class="hl">Construímos uma categoria.</span></div>
+            </div>
+            <p class="lead" style="padding-top:18px;border-top:1px solid var(--line)">Toda peça existe para tornar o "secondment" um reflexo — e a Chazin Mello, o nome por trás dele.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -408,19 +473,25 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
       </div>
       <div class="g2">
         <div class="panel glow" data-anim style="--i:1">
-          <div class="persona-panel" style="height:100%">
+          <div class="pfill" style="justify-content:space-between">
             <div class="tagline" style="color:var(--cyan)">Quem contrata · B2B</div>
-            <h3>Liderança jurídica que precisa de gente boa, rápido</h3>
-            <div class="roles">Gerente e Diretor Jurídico, Legal Operations, Regional Legal Counsel, Head Jurídica — dentro de empresas e escritórios.</div>
-            <div class="move"><b>O que os move:</b> headcount travado, ausência inesperada, pico de demanda, projeto extraordinário que não pode esperar uma contratação longa.</div>
+            <h3 style="font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.06">Liderança jurídica que precisa de gente boa, rápido</h3>
+            <div class="roles" style="font-size:18px;line-height:1.5;color:var(--mut)">Gerente e Diretor Jurídico, Legal Operations, Regional Legal Counsel, Head Jurídica — dentro de empresas e escritórios.</div>
+            <div class="chips">
+              <span class="chipx">headcount travado</span><span class="chipx">ausência inesperada</span><span class="chipx">pico de demanda</span><span class="chipx">projeto extraordinário</span>
+            </div>
+            <div style="font-size:16.5px;line-height:1.5;color:var(--mut);padding-top:18px;border-top:1px solid var(--line)"><b style="color:var(--wt)">O que os move:</b> resolver o gargalo sem esperar um processo de contratação longo.</div>
           </div>
         </div>
         <div class="panel" data-anim style="--i:2">
-          <div class="persona-panel" style="height:100%">
+          <div class="pfill" style="justify-content:space-between">
             <div class="tagline" style="color:#ffb37a">Quem quer ser alocado · B2C</div>
-            <h3>Advogados pleno e sênior em busca da próxima oportunidade</h3>
-            <div class="roles">Profissionais experientes buscando estabilidade, reconhecimento e um caminho diferente do óbvio.</div>
-            <div class="move"><b>O que os move:</b> segurança financeira, visibilidade e um caminho de carreira fora do previsível.</div>
+            <h3 style="font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.06">Advogados pleno e sênior em busca da próxima oportunidade</h3>
+            <div class="roles" style="font-size:18px;line-height:1.5;color:var(--mut)">Profissionais experientes buscando estabilidade, reconhecimento e um caminho diferente do óbvio.</div>
+            <div class="chips">
+              <span class="chipx">estabilidade</span><span class="chipx">reconhecimento</span><span class="chipx">visibilidade</span><span class="chipx">nova carreira</span>
+            </div>
+            <div style="font-size:16.5px;line-height:1.5;color:var(--mut);padding-top:18px;border-top:1px solid var(--line)"><b style="color:var(--wt)">O que os move:</b> segurança financeira e um caminho fora do previsível.</div>
           </div>
         </div>
       </div>
@@ -440,17 +511,17 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <h1 data-anim style="--i:1;font-size:50px;text-align:right;max-width:none">Por que Chazin Mello</h1>
       </div>
       <div class="diffs">
-        <div class="diff" data-anim style="--i:2"><div class="ix">01 — REDE</div><h3>Rede curada e ativada</h3><p>Não começamos do zero. Já sabemos quem são os melhores secondees do mercado, onde estão e onde performam melhor.</p></div>
-        <div class="diff" data-anim style="--i:3"><div class="ix">02 — CUIDADO</div><h3>Acompanhamento ponta a ponta</h3><p>Onboarding e acompanhamento do secondee e do gestor durante toda a jornada. Quem contrata compra tranquilidade, não só um profissional.</p></div>
-        <div class="diff" data-anim style="--i:4"><div class="ix">03 — VELOCIDADE</div><h3>Velocidade com senioridade</h3><p>Quando o RH não libera headcount ou o processo levaria 3 meses, entregamos um profissional pleno ou sênior em poucas semanas.</p></div>
-        <div class="diff" data-anim style="--i:5"><div class="ix">04 — MÉTODO</div><h3>Curadoria humanizada</h3><p>Recrutamento individualizado, Business Partner exclusivo e uma metodologia de gestão de projeto que não existe em outro lugar do mercado.</p></div>
+        <div class="diff" data-anim style="--i:2"><span class="wm">01</span><div class="ix">01 — REDE</div><div><h3>Rede curada e ativada</h3><p>Não começamos do zero. Já sabemos quem são os melhores secondees do mercado, onde estão e onde performam melhor.</p></div></div>
+        <div class="diff" data-anim style="--i:3"><span class="wm">02</span><div class="ix">02 — CUIDADO</div><div><h3>Acompanhamento ponta a ponta</h3><p>Onboarding e acompanhamento do secondee e do gestor durante toda a jornada. Quem contrata compra tranquilidade, não só um profissional.</p></div></div>
+        <div class="diff" data-anim style="--i:4"><span class="wm">03</span><div class="ix">03 — VELOCIDADE</div><div><h3>Velocidade com senioridade</h3><p>Quando o RH não libera headcount ou o processo levaria 3 meses, entregamos um profissional pleno ou sênior em poucas semanas.</p></div></div>
+        <div class="diff" data-anim style="--i:5"><span class="wm">04</span><div class="ix">04 — MÉTODO</div><div><h3>Curadoria humanizada</h3><p>Recrutamento individualizado, Business Partner exclusivo e uma metodologia de gestão de projeto que não existe em outro lugar do mercado.</p></div></div>
       </div>
       <div class="band" data-anim style="--i:6">
-        <div class="stat accent"><div class="v">91<small>%</small></div><div class="k">nota 9 ou 10</div></div>
-        <div class="stat"><div class="v">9,68</div><div class="k">nota média</div></div>
-        <div class="stat"><div class="v">0</div><div class="k">detratores</div></div>
-        <div class="stat"><div class="v">35</div><div class="k">respostas</div></div>
-        <div class="stat"><div class="v">5</div><div class="k">anos de mercado</div></div>
+        <div class="stat accent"><div class="v"><span class="count" data-to="91" data-suf="%">91%</span></div><div class="k">nota 9 ou 10</div></div>
+        <div class="stat"><div class="v"><span class="count" data-to="9.68" data-dec="2">9,68</span></div><div class="k">nota média</div></div>
+        <div class="stat"><div class="v"><span class="count" data-to="0">0</span></div><div class="k">detratores</div></div>
+        <div class="stat"><div class="v"><span class="count" data-to="35">35</span></div><div class="k">respostas</div></div>
+        <div class="stat"><div class="v"><span class="count" data-to="5">5</span></div><div class="k">anos de mercado</div></div>
       </div>
     </div>
   </section>
@@ -464,20 +535,20 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <div class="eyebrow" data-anim style="--i:0"><span class="num">03</span> De onde partimos</div>
         <div class="beam" data-anim style="--i:0;--bw:210px;margin:18px 0 18px"></div>
       </div>
-      <div class="g2u">
+      <div class="g2u" style="grid-template-columns:1.2fr .8fr">
         <div class="panel" data-anim style="--i:1">
-          <div class="col" style="justify-content:center;gap:22px">
+          <div class="pfill" style="justify-content:space-between">
+            <div class="tagline" style="color:var(--blue-d)">De onde partimos</div>
             <h1 style="font-size:42px;max-width:none">O perfil comunica seriedade — ainda não comunica categoria.</h1>
+            <p class="lead" style="font-size:18px">A maior parte do conteúdo é reativa — divulgação de vaga, participação em evento — sem um fio condutor que explique o que é secondment para quem chega sem contexto.</p>
             <div style="display:flex;flex-direction:column;gap:16px">
-              <div style="display:grid;grid-template-columns:auto 1fr;gap:14px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:8px;box-shadow:0 0 10px var(--blue)"></span><span class="lead" style="font-size:17px"><strong>O que já funciona:</strong> presença consistente em eventos, relacionamento forte em São Paulo e uma boa base de depoimentos pouco explorada.</span></div>
-              <div style="display:grid;grid-template-columns:auto 1fr;gap:14px"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:8px;box-shadow:0 0 10px var(--amber)"></span><span class="lead" style="font-size:17px"><strong>O que falta:</strong> uma porta de entrada visual para quem nunca ouviu falar do modelo — e uma identidade que sustente esse ensino ao longo do tempo.</span></div>
+              <div style="display:grid;grid-template-columns:auto 1fr;gap:14px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:8px;box-shadow:0 0 10px var(--blue)"></span><span class="lead" style="font-size:16.5px"><strong>O que já funciona:</strong> presença consistente em eventos, relacionamento forte em São Paulo e uma boa base de depoimentos pouco explorada.</span></div>
+              <div style="display:grid;grid-template-columns:auto 1fr;gap:14px"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:8px;box-shadow:0 0 10px var(--amber)"></span><span class="lead" style="font-size:16.5px"><strong>O que falta:</strong> uma porta de entrada visual para quem nunca ouviu falar do modelo — e uma identidade que sustente esse ensino ao longo do tempo.</span></div>
             </div>
+            <div class="chips"><span class="chipx">Instagram</span><span class="chipx">LinkedIn</span><span class="chipx">conteúdo reativo</span></div>
           </div>
         </div>
-        <div style="display:grid;grid-template-rows:1fr 1fr;gap:16px;min-height:0">
-          <div class="drop" data-drop data-anim style="--i:2"><div class="ph"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15l-5-5L5 21"/><path d="M12 3v10m0-10l-3.5 3.5M12 3l3.5 3.5"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div><div class="t">Prints do Instagram atual</div><div class="s">arraste a imagem · ou clique</div></div></div>
-          <div class="drop" data-drop data-anim style="--i:3"><div class="ph"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15l-5-5L5 21"/><path d="M12 3v10m0-10l-3.5 3.5M12 3l3.5 3.5"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div><div class="t">Prints do LinkedIn atual</div><div class="s">arraste a imagem · ou clique</div></div></div>
-        </div>
+        <div class="drop" data-drop data-anim style="--i:2"><div class="ph"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15l-5-5L5 21"/><path d="M12 3v10m0-10l-3.5 3.5M12 3l3.5 3.5"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div><div class="t">Perfil atual — Instagram &amp; LinkedIn</div><div class="s">arraste a imagem · ou clique</div></div></div>
       </div>
     </div>
   </section>
@@ -494,18 +565,22 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <h1 class="big" data-anim style="--i:1;font-size:76px">Sábio <b style="color:var(--cyan);font-weight:400">+</b> Criador</h1>
       </div>
       <div class="g2">
-        <div class="panel glow" data-anim style="--i:2">
-          <div class="col" style="height:100%;justify-content:center;gap:14px">
+        <div class="panel glow" data-anim style="--i:2;overflow:hidden;position:relative">
+          <span style="position:absolute;right:6px;bottom:-30px;font-size:150px;font-weight:700;color:rgba(0,162,248,.06);letter-spacing:-.05em;pointer-events:none">01</span>
+          <div class="pfill" style="position:relative;justify-content:space-between">
             <div class="tagline" style="color:var(--cyan)">O Sábio · autoridade</div>
-            <h3 style="font-size:30px;font-weight:600;letter-spacing:-.02em">A autoridade que o Direito já carrega</h3>
-            <p style="font-size:17px;line-height:1.55;color:var(--mut)">Conhecimento técnico, domínio do mercado, a conversa de igual para igual com um Diretor Jurídico. É o que faz o mercado confiar.</p>
+            <h3 style="font-size:36px;font-weight:600;letter-spacing:-.02em;line-height:1.08">A autoridade que o Direito já carrega</h3>
+            <p style="font-size:20px;line-height:1.55;color:var(--mut)">Conhecimento técnico, domínio do mercado, a conversa de igual para igual com um Diretor Jurídico. É o que faz o mercado confiar.</p>
+            <div class="chips"><span class="chipx">técnico</span><span class="chipx">autoridade</span><span class="chipx">confiança</span></div>
           </div>
         </div>
-        <div class="panel" data-anim style="--i:3">
-          <div class="col" style="height:100%;justify-content:center;gap:14px">
+        <div class="panel" data-anim style="--i:3;overflow:hidden;position:relative">
+          <span style="position:absolute;right:6px;bottom:-30px;font-size:150px;font-weight:700;color:rgba(255,140,60,.06);letter-spacing:-.05em;pointer-events:none">02</span>
+          <div class="pfill" style="position:relative;justify-content:space-between">
             <div class="tagline" style="color:#ffb37a">O Criador · inovação</div>
-            <h3 style="font-size:30px;font-weight:600;letter-spacing:-.02em">A inovação que nos diferencia</h3>
-            <p style="font-size:17px;line-height:1.55;color:var(--mut)">A face jovem que trouxe ao Brasil um modelo que não existia. Literalmente inventando uma categoria.</p>
+            <h3 style="font-size:36px;font-weight:600;letter-spacing:-.02em;line-height:1.08">A inovação que nos diferencia</h3>
+            <p style="font-size:20px;line-height:1.55;color:var(--mut)">A face jovem que trouxe ao Brasil um modelo que não existia — literalmente inventando uma categoria no jurídico.</p>
+            <div class="chips"><span class="chipx">jovem</span><span class="chipx">inovador</span><span class="chipx">categoria</span></div>
           </div>
         </div>
       </div>
@@ -578,8 +653,8 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
         <div class="sw" data-anim style="--i:2"><div class="fill" style="background:linear-gradient(160deg,#04060b,#0a1424)"></div><span class="role">Base</span><div class="meta"><div class="nm">Ink</div><div class="hx">#04060B</div></div></div>
         <div class="sw" data-anim style="--i:3"><div class="fill" style="background:linear-gradient(160deg,#00A2F8,#0079d6)"></div><span class="role">Primária</span><div class="meta"><div class="nm">Azul institucional</div><div class="hx">#00A2F8</div></div></div>
         <div class="sw" data-anim style="--i:4"><div class="fill" style="background:linear-gradient(160deg,#3fe0ff,#0aa6ff)"></div><span class="role">Destaque</span><div class="meta"><div class="nm">Ciano</div><div class="hx">#3FE0FF</div></div></div>
-        <div class="sw tbd" data-anim style="--i:5"><div class="fill"><span>a definir</span></div><span class="role">Apoio</span><div class="meta"><div class="nm">Complementar</div><div class="hx">— · a escolher</div></div></div>
-        <div class="sw tbd" data-anim style="--i:6"><div class="fill"><span>a definir</span></div><span class="role">Apoio</span><div class="meta"><div class="nm">Complementar</div><div class="hx">— · a escolher</div></div></div>
+        <div class="sw" data-anim style="--i:5"><div class="fill" style="background:linear-gradient(160deg,#ffffff,#e6ecf3)"></div><span class="role" style="color:#0a2036;background:rgba(255,255,255,.7);border-color:rgba(20,60,110,.25)">Respiro</span><div class="meta"><div class="nm">Branco</div><div class="hx">#FFFFFF</div></div></div>
+        <div class="sw" data-anim style="--i:6"><div class="fill" style="background:linear-gradient(160deg,#9aa3b2,#6b7484)"></div><span class="role">Neutro</span><div class="meta"><div class="nm">Cinza</div><div class="hx">#8A93A3</div></div></div>
       </div>
     </div>
   </section>
@@ -716,6 +791,8 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
 
 </div>
 
+  <div id="ptr"></div>
+
   <header class="hud hud-top">
     <span class="logo-slot"><span class="logo-mark d lg-d"></span><span class="logo-mark l lg-l"></span></span>
     <div class="sec" id="secLabel">Capa</div>
@@ -748,15 +825,44 @@ h1.big{font-size:92px;line-height:.94;letter-spacing:-.035em;max-width:15ch}
   var segs=[];
   for(var i=0;i<N;i++){(function(k){var s=document.createElement('button');s.className='seg';s.setAttribute('role','tab');
     s.setAttribute('aria-label','Lâmina '+(k+1)+': '+slides[k].dataset.label);s.addEventListener('click',function(){go(k)});rail.appendChild(s);segs.push(s);})(i);}
-  function fit(){stage.style.setProperty('--s',Math.min(window.innerWidth/1920,window.innerHeight/1080));}
+  var curScale=1;
+  function fit(){curScale=Math.min(window.innerWidth/1920,window.innerHeight/1080);stage.style.setProperty('--s',curScale);}
   window.addEventListener('resize',fit);fit();
+
+  // dynamic count-up for stat numbers
+  function fmt(v,dec){var s=v.toFixed(dec);return dec>0?s.replace('.',','):s;}
+  function runCounts(sl){
+    sl.querySelectorAll('.count').forEach(function(el){
+      var to=parseFloat(el.getAttribute('data-to')),dec=parseInt(el.getAttribute('data-dec')||'0',10),
+          pre=el.getAttribute('data-pre')||'',suf=el.getAttribute('data-suf')||'',t0=null,dur=1100;
+      if(el._raf)cancelAnimationFrame(el._raf);
+      el.textContent=pre+fmt(0,dec)+suf;
+      function step(t){if(!t0)t0=t;var p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+        el.textContent=pre+fmt(to*e,dec)+suf;if(p<1)el._raf=requestAnimationFrame(step);}
+      el._raf=requestAnimationFrame(step);
+    });
+  }
+
+  // pointer-follow glow + subtle background parallax
+  var ptr=document.getElementById('ptr');
+  stage.addEventListener('pointermove',function(e){
+    var r=stage.getBoundingClientRect();
+    var x=(e.clientX-r.left)/curScale, y=(e.clientY-r.top)/curScale;
+    ptr.style.setProperty('--px',x+'px');ptr.style.setProperty('--py',y+'px');
+    var dx=(x/1920-.5),dy=(y/1080-.5);
+    var mo=slides[idx].querySelector('.motes');
+    if(mo)mo.style.transform='translate('+(dx*30)+'px,'+(dy*24)+'px)';
+    var st=slides[idx].querySelector('.stack');
+    if(st)st.style.transform='translate('+(dx*6)+'px,'+(dy*5)+'px)';
+  });
   function go(n){n=Math.max(0,Math.min(N-1,n));if(n===idx&&slides[idx].classList.contains('active'))return;
     slides[idx].classList.remove('active');idx=n;var sl=slides[idx];sl.classList.add('active');
     curEl.textContent=('0'+(idx+1)).slice(-2);secEl.textContent=sl.dataset.label||'';
     stage.classList.toggle('slide-light-hud',sl.classList.contains('light'));
     segs.forEach(function(s,k){s.classList.toggle('done',k<idx);s.classList.toggle('cur',k===idx);});
     document.getElementById('prev').disabled=(idx===0);document.getElementById('next').disabled=(idx===N-1);
-    if(idx>0)hint.classList.add('gone');}
+    if(idx>0)hint.classList.add('gone');
+    runCounts(sl);}
   document.getElementById('prev').addEventListener('click',function(){go(idx-1)});
   document.getElementById('next').addEventListener('click',function(){go(idx+1)});
   document.addEventListener('keydown',function(e){
